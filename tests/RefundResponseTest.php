@@ -1,9 +1,9 @@
 <?php
 
-namespace DigiTickets\StripeTests;
+namespace Omnipay\StripeCheckout\Tests;
 
-use DigiTickets\Stripe\Messages\RefundRequest;
-use DigiTickets\Stripe\Messages\RefundResponse;
+use Omnipay\StripeCheckout\Messages\RefundRequest;
+use Omnipay\StripeCheckout\Messages\RefundResponse;
 use Mockery;
 use Omnipay\Tests\TestCase;
 use Stripe\Refund;
@@ -25,7 +25,6 @@ class RefundResponseTest extends TestCase
         $successfulRefund->status = Refund::STATUS_SUCCEEDED;
         $failedRefund = new Refund(self::REFUND_ID_SUCCESS);
         $failedRefund->status = self::STATUS_FAILED;
-        $refundJsonRef = sprintf('{"refundRef":"%s"}', self::REFUND_ID_SUCCESS);
 
         return [
             'nothing' => [
@@ -47,14 +46,14 @@ class RefundResponseTest extends TestCase
                 ['refund' => $successfulRefund],
                 true,
                 Refund::STATUS_SUCCEEDED,
-                $refundJsonRef,
+                self::REFUND_ID_SUCCESS,
             ],
             'failed refund' => [
                 $request,
                 ['refund' => $failedRefund],
                 false,
                 self::STATUS_FAILED,
-                $refundJsonRef
+                self::REFUND_ID_SUCCESS
             ],
         ];
     }
@@ -79,6 +78,6 @@ class RefundResponseTest extends TestCase
 
         $this->assertEquals($expectedSuccess, $refundResponse->isSuccessful());
         $this->assertEquals($expectedMessage, $refundResponse->getMessage());
-        $this->assertEquals($expectedReference, $refundResponse->getTransactionReference());
+        $this->assertEquals($expectedReference, $refundResponse->getTransactionId());
     }
 }
