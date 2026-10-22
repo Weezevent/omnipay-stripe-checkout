@@ -28,6 +28,7 @@ class FetchTransactionResponse extends AbstractResponse {
     /**
      * @var string|null
      */
+    private $internalTransactionRef;
 
     public function __construct(FetchTransactionRequest $request, $data) {
         parent::__construct($request, $data);

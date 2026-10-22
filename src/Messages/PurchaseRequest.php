@@ -4,7 +4,7 @@ namespace Omnipay\StripeCheckout\Messages;
 
 class PurchaseRequest extends AbstractCheckoutRequest {
 
-    private function nullIfEmpty(string $value = null) {
+    private function nullIfEmpty(?string $value = null) {
         return empty($value) ? null : $value;
     }
 
