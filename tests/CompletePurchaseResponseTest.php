@@ -1,24 +1,21 @@
 <?php
 
-namespace DigiTickets\StripeTests;
+namespace Omnipay\StripeCheckout\Tests;
 
-use DigiTickets\Stripe\Messages\CompletePurchaseRequest;
-use DigiTickets\Stripe\Messages\CompletePurchaseResponse;
-use DigiTickets\StripeTests\Fixtures\PaymentIntent;
+use Omnipay\StripeCheckout\Messages\CompletePurchaseRequest;
+use Omnipay\StripeCheckout\Messages\CompletePurchaseResponse;
+use Omnipay\StripeCheckout\Tests\Fixtures\PaymentIntent;
 use Mockery;
 use Omnipay\Tests\TestCase;
 
 class CompletePurchaseResponseTest extends TestCase
 {
-    const SESSION_ID = 'complete-purchase-request-session-id';
     const TX_ID = 'complete-purchase-request-id';
 
     public function creationProvider()
     {
         $request = Mockery::mock(CompletePurchaseRequest::class);
-        $request->shouldReceive('getSessionID')->andReturn(self::SESSION_ID);
         $request->shouldReceive('getTransactionId')->andReturn(self::TX_ID);
-        $successfulTxRef = sprintf('{"txRef":"%s","sessionId":"%s"}', PaymentIntent::PI_ID, self::SESSION_ID);
 
         return [
             'no payment intent' => [
@@ -26,28 +23,28 @@ class CompletePurchaseResponseTest extends TestCase
                 [],
                 false,
                 'Could not retrieve payment',
-                sprintf('{"sessionId":"%s"}', self::SESSION_ID),
+                null,
             ],
             'successful' => [
                 $request,
                 ['paymentIntent' => new PaymentIntent(PaymentIntent::PI_ID, CompletePurchaseResponse::STATUS_SUCCESS)],
                 true,
                 CompletePurchaseResponse::STATUS_SUCCESS,
-                $successfulTxRef,
+                PaymentIntent::PI_ID,
             ],
             'canceled' => [
                 $request,
                 ['paymentIntent' => new PaymentIntent(PaymentIntent::PI_ID, CompletePurchaseResponse::STATUS_CANCELED)],
                 false,
                 'Canceled by customer',
-                $successfulTxRef,
+                PaymentIntent::PI_ID,
             ],
             'unknown' => [
                 $request,
                 ['paymentIntent' => new PaymentIntent(PaymentIntent::PI_ID, 'Other')],
                 false,
                 'Unknown error',
-                $successfulTxRef,
+                PaymentIntent::PI_ID,
             ],
         ];
     }
@@ -57,7 +54,7 @@ class CompletePurchaseResponseTest extends TestCase
      * @param $data
      * @param bool $expectSuccess
      * @param string $expectMessage
-     * @param string $expectedTransactionReference
+     * @param string|null $expectedTransactionReference
      *
      * @dataProvider creationProvider
      */
@@ -66,7 +63,7 @@ class CompletePurchaseResponseTest extends TestCase
         $data,
         bool $expectSuccess,
         string $expectMessage,
-        string $expectedTransactionReference
+        string $expectedTransactionReference = null
     ) {
         $completePurchaseResponse = new CompletePurchaseResponse($request, $data);
 

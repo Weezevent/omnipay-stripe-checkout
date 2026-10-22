@@ -76,7 +76,7 @@ class CompletePurchaseResponse extends AbstractResponse {
     }
 
     public function getTransactionReference() {
-        return (new ComplexTransactionRef($this->request->getSessionID(), $this->internalTransactionRef))->asJson();
+        return $this->internalTransactionRef;
     }
 
     public function getTransactionId() {

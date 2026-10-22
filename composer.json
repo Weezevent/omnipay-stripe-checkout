@@ -26,7 +26,7 @@
     },
     "psr-4": {
       "Omnipay\\StripeCheckout\\": "src",
-      "DigiTickets\\StripeTests\\": "tests"
+      "Omnipay\\StripeCheckout\\Tests\\": "tests"
     }
   },
   "require": {
