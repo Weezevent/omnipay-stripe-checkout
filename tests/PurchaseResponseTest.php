@@ -1,10 +1,10 @@
 <?php
 
-namespace DigiTickets\StripeTests;
+namespace Omnipay\StripeCheckout\Tests;
 
-use DigiTickets\Stripe\Messages\CompletePurchaseRequest;
-use DigiTickets\Stripe\Messages\PurchaseResponse;
-use DigiTickets\StripeTests\Fixtures\Request;
+use Omnipay\StripeCheckout\Messages\CompletePurchaseRequest;
+use Omnipay\StripeCheckout\Messages\PurchaseResponse;
+use Omnipay\StripeCheckout\Tests\Fixtures\Request;
 use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Tests\TestCase;
 use Stripe\Checkout\Session;
@@ -12,11 +12,13 @@ use Stripe\Checkout\Session;
 class PurchaseResponseTest extends TestCase
 {
     const SESSION_ID_1 = 'S101';
+    const PAYMENT_INTENT_ID = 'PI101';
 
     public function creationProvider()
     {
         $request = new Request();
         $session = new Session(self::SESSION_ID_1);
+        $session->payment_intent = self::PAYMENT_INTENT_ID;
 
         return [
             'no session' => [$request, [], null],
@@ -59,7 +61,6 @@ class PurchaseResponseTest extends TestCase
         $this->assertEquals([], $purchaseResponse->getRedirectData());
 
         // Check the transaction reference.
-        $txRef = $purchaseResponse->getTransactionReference();
-        $this->assertEquals(sprintf('{"sessionId":"%s"}', $expectedSessionID), $txRef);
+        $this->assertEquals(self::PAYMENT_INTENT_ID, $purchaseResponse->getTransactionReference());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace DigiTickets\StripeTests\Fixtures;
+namespace Omnipay\StripeCheckout\Tests\Fixtures;
 
 use Omnipay\Common\Message\RequestInterface;
 
